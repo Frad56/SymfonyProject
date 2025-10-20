@@ -1,0 +1,26 @@
+{# templates/product/index.html.twig #}
+
+{% extends 'base.html.twig' %}
+{% block title %}Liste des Produits{% endblock %}
+{% block body %}
+<div class="container">
+    <h1 class="my-4">Découvrez tous nos produits</h1>
+    <div class="row">
+    {% for product in products_list %}
+        <div class="col-md-4">
+            <div class="card my-2">
+                {# La fonction asset() pointe vers le dossier 'public' #}
+                <img src="{{ asset(product.image) }}" class="card-img-top" alt="{{ product.name }}">
+                <div class="card-body">
+                    <h5 class="card-title">{{ product.name }}</h5>
+                    <p class="card-text">{{ product.description }}</p>
+                    <p class="font-weight-bold">Prix : {{ product.price|number_format(2, ',', ' ') }} €</p>
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <p>Aucun produit n'est disponible pour le moment.</p>
+    {% endfor %}
+    </div>
+</div>
+{% endblock %}

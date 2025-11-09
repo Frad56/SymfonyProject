@@ -2,16 +2,20 @@
 
 namespace App\Controller;
 
+use App\Entity\Product;
 use App\Repository\ProductRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-
-#[Route('/product', name: 'app_product_')]
+use App\Form\ProductType;
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface; // N'oubliez pas l'import
+use Symfony\Component\HttpFoundation\Request;
+#[Route('/product', name: '')]
  class ProductController extends AbstractController
 {
-     //root avec Methode 
-    #[Route('s', name: 'app_product')]
+
+    #[Route('', name: 'app_product')]
     public function index(ProductRepository $productRepository): Response
     {
         $product =$productRepository->findAll();
@@ -23,27 +27,66 @@ use Symfony\Component\Routing\Attribute\Route;
 
 
     #[Route('/new', name: 'app_product_new')]
-    public function newProducts(): Response
+    public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
-        return new Response('<h1>Voici nos derniers produits !</h1>');
-    }    
-
-     //root avec Methode 
-    #[Route('/{id<\d+>}', name: 'app_product_show')]
-    public function show(int $id,ProductRepository $productRepository): Response
-    {
-        // On simule la récupération de la base de données
-        $product = $productRepository->find($id);
+        $product = new Product();
         
-        
+       
+        $form = $this->createForm(ProductType::class, $product);
 
-        if (!$product) {
-            throw $this->createNotFoundException('Le produit demandé n\'existe pas !');
+        
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            $entityManager->persist($product); 
+            $entityManager->flush();  
+              
+            //redirection
+            return $this->redirectToRoute('app_product');
         }
 
-        return $this->render('product/show.html.twig', [
-            'product_item' => $product,
+        //si il ne clik pas afficher cette page new.htm.twig        
+        return $this->render('product/new.html.twig', [
+            'productForm' => $form->createView(),
         ]);
+    } 
+    
+    #[Route('/edit/{id}',name:'app_product_edit')]
+    public function edit(Request $request, Product $product, EntityManagerInterface $entityManager ):Response
+    {
+        $form = $this -> createForm(ProductType::class ,$product);
+        $form->handleRequest($request);
+
+        if($form -> isSubmitted() && $form -> isValid()){
+            $entityManager ->flush();
+            return $this ->redirectToRoute('app_product');
+        }
+
+        return $this->render('product/edit.html.twig',[
+            'productForm'=> $form->createView(),
+            'product_view' => $product,
+        ]);
+    } 
+
+    // src/Controller/ProductController.php
+
+#[Route('/product/delete/{id}', name: 'app_product_delete', methods: ['POST'])]
+public function delete(Request $request, Product $product, EntityManagerInterface $entityManager): Response
+{
+    // 1. Récupération du jeton CSRF soumis par le formulaire
+    $submittedToken = $request->request->get('_token');
+
+    // 2. Vérification du jeton (ID du jeton et valeur soumise)
+    if ($this->isCsrfTokenValid('delete' . $product->getId(), $submittedToken)) {
+        
+        // 3. Suppression (via Doctrine)
+        $entityManager->remove($product); // Prépare la suppression
+        $entityManager->flush();           // Exécute la requête SQL (DELETE)
     }
+
+    // Redirection vers la liste
+    return $this->redirectToRoute('app_products_index');
+}
 
 }

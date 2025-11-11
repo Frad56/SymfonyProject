@@ -27,7 +27,7 @@ class Product
 
     #[ORM\ManyToOne(inversedBy: 'products')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?categorie $categorie = null;
+    private ?Categorie $categorie = null;
 
     public function getId(): ?int
     {

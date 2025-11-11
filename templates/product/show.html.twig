@@ -12,6 +12,10 @@
             <h1>{{ product_item.name }}</h1>
             <p>{{ product_item.description }}</p>
             <h3>{{ product_item.price|number_format(2, ',', ' ') }} €</h3>
+            <p>Prix Hors Taxes : <strong>{{ product_item.price|number_format(2, ',', ' ') }} €</strong></p>
+    <p>Taux de TVA : {{ tva_rate }}%</p>
+    <h3>Prix Toutes Taxes Comprises : <strong>{{ price_ttc|number_format(2, ',', ' ') }} €</strong></h3>
+
             
         </div>
     </div>

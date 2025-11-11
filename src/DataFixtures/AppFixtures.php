@@ -20,7 +20,7 @@ class AppFixtures extends Fixture
             $cat = new Categorie();
             $cat->setName($name);
             $manager->persist($cat);
-            $categories[] = $cat; // stocker pour réutiliser pour les produits
+            $categories[] = $cat; 
         }
         for($i = 0; $i < 10 ; $i++){
 

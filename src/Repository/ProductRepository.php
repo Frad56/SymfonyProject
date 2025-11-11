@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Product;
+use App\Entity\Categorie;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -16,6 +17,17 @@ class ProductRepository extends ServiceEntityRepository
         parent::__construct($registry, Product::class);
     }
 
+    public function findLatestProductsWithCategory(int $limit = 3): array
+    {
+        return $this->createQueryBuilder('p')
+            ->leftJoin('p.categorie', 'c')
+            ->addSelect('c')
+            ->orderBy('p.id', 'DESC')
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getResult();
+    }
+    
     //    /**
     //     * @return Product[] Returns an array of Product objects
     //     */

@@ -16,6 +16,7 @@
                     <p class="card-text">{{ product.description }}</p>
                     <p class="font-weight-bold">Prix : {{ product.price|number_format(2, ',', ' ') }} €</p>
                     <a href="{{ path('app_product_edit', {id: product.id}) }}" class="btn btn-warning mt-3">Modifier le produit</a>
+                    <a href="{{ path('app_product_show', {id: product.id}) }}" class="btn btn-warning mt-3">voir le détail</a>
 
 <form method="post" action="{{ path('app_product_delete', {'id': product.id}) }}" style="display:inline-block">
     {# Génère le champ caché _token avec le jeton de sécurité #}

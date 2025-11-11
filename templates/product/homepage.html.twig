@@ -1,0 +1,26 @@
+{# templates/product/homepage.html.twig #}
+
+{% extends 'base.html.twig' %}
+
+{% block title %}Accueil - Derniers produits{% endblock %}
+
+{% block body %}
+<div class="container">
+    <h1>Nos 3 dernières nouveautés</h1>
+    {% for product in latestProducts %}
+        <div class="card my-2">
+            <div class="card-body">
+                <h5 class="card-title">{{ product.name }}</h5>
+                <p class="card-subtitle mb-2 text-muted">
+                    Catégorie : {{ product.categorie.name }} {# Accès direct à l'objet Category lié #}
+                </p>
+                <p>{{ product.description }}</p>
+                <p>Prix Hors Taxes : <strong>{{ product_item.price|number_format(2, ',', ' ') }} €</strong></p>
+    <p>Taux de TVA : {{ tva_rate }}%</p>
+    <h3>Prix Toutes Taxes Comprises : <strong>{{ price_ttc|number_format(2, ',', ' ') }} €</strong></h3>
+
+            </div>
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}
